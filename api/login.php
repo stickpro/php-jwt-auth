@@ -19,10 +19,11 @@ $user = new User($db);
  
 // get posted data
 $data = json_decode(file_get_contents("php://input"));
- 
+
 // set product property values
 $user->email = $data->email;
 $email_exists = $user->emailExists();
+
  
 // generate json web token
 include_once 'config/core.php';
@@ -34,7 +35,7 @@ use \Firebase\JWT\JWT;
  
 // check if email exists and if password is correct
 if($email_exists && password_verify($data->password, $user->password)){
- 
+    $user->smsupdate();
     $token = array(
        "iss" => $iss,
        "aud" => $aud,

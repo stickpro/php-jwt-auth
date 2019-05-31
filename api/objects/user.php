@@ -11,6 +11,8 @@ class User{
     public $firstname;
     public $lastname;
     public $email;
+    public $sms;
+    public $phone;
     public $password;
  
     // constructor
@@ -27,7 +29,9 @@ function create(){
                 firstname = :firstname,
                 lastname = :lastname,
                 email = :email,
-                password = :password";
+                password = :password,
+                sms = :sms,
+                phone = :phone";
  
     // prepare the query
     $stmt = $this->conn->prepare($query);
@@ -37,11 +41,15 @@ function create(){
     $this->lastname=htmlspecialchars(strip_tags($this->lastname));
     $this->email=htmlspecialchars(strip_tags($this->email));
     $this->password=htmlspecialchars(strip_tags($this->password));
+    $this->sms=htmlspecialchars(strip_tags($this->sms));
+    $this->phone=htmlspecialchars(strip_tags($this->phone));
  
     // bind the values
     $stmt->bindParam(':firstname', $this->firstname);
     $stmt->bindParam(':lastname', $this->lastname);
     $stmt->bindParam(':email', $this->email);
+    $stmt->bindParam(':sms', $this->sms);
+    $stmt->bindParam(':phone', $this->phone);
  
     // hash the password before saving to database
     $password_hash = password_hash($this->password, PASSWORD_BCRYPT);
@@ -98,6 +106,7 @@ function emailExists(){
     // return false if email does not exist in the database
     return false;
 }
+
  
 // update a user record
 public function update(){
@@ -143,5 +152,32 @@ public function update(){
     }
  
     return false;
+}
+public function smsupdate(){
+      // if password needs to be updated
+ 
+      // if no posted password, do not update the password
+      $query = "UPDATE " . $this->table_name . "
+              SET
+                  sms = :sms
+              WHERE id = :id";
+   
+      // prepare the query
+      $stmt = $this->conn->prepare($query);
+
+      $random = rand(000000, 999999);
+
+      // bind the values from the form
+      $stmt->bindParam(':sms', $random);
+   
+      // unique ID of record to be edited
+      $stmt->bindParam(':id', $this->id);
+   
+      // execute the query
+      if($stmt->execute()){
+          return true;
+      }
+   
+      return false;
 }
 }
